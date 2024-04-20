@@ -262,14 +262,14 @@ end)
 local function WashVehicle(vehicle, use_props)
     if washingVehicle then return end
     washingVehicle = true
-    TriggerCallback("carwash:CanPurchaseCarWash", function(paid)
+    local paid = lib.callback.await("carwash:CanPurchaseCarWash")
         if paid then
             FreezeEntityPosition(vehicle, true)
             TriggerServerEvent('carwash:DoVehicleWashParticles', VehToNet(vehicle), use_props)
         else
             washingVehicle = false
         end
-    end)
+    
 end
 
 local function ShowHelpNotification(msg, thisFrame, beep, duration)
@@ -285,6 +285,8 @@ local function ShowHelpNotification(msg, thisFrame, beep, duration)
 end
 
 Citizen.CreateThread(function()
+    local showText = false
+    local nearby = false
     while true do
         local sleep = 1000
         local PlayerPed = PlayerPedId()
@@ -295,13 +297,26 @@ Citizen.CreateThread(function()
                 for _, carwash in pairs(Config.locations) do
                     local dist = #(coords - carwash.location)
                     if dist <= 10.0 then
+                        nearby = false
                         sleep = 100
                         if dist <= 2.0 then
-                            ShowHelpNotification((Config.button[1]):format(Config.cost), true, false, -1)
+                            nearby = true
+                            if not showText then
+                                showText = true
+                                lib.showTextUI((Config.button[1]):format(Config.cost), {
+                                    position = "left-center",
+                                    icon = 'fa-solid fa-hand-sparkles',
+                                    iconAnimation = 'bounce',
+                                })
+                            end
                             sleep = 0
                             if IsControlJustPressed(Config.button[2], Config.button[3]) then
                                 WashVehicle(myVehicle, carwash.use_props)
                             end
+                        end
+                        if not nearby and showText and dist > 2.0 then
+                            showText = false
+                            lib.hideTextUI()
                         end
                     end
                 end
