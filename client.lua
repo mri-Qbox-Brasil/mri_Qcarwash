@@ -252,7 +252,7 @@ AddEventHandler('carwash:DoVehicleWashParticles', function(vehNet, washer, use_p
             WashDecalsFromVehicle(vehicle, 1.0)
             Wait(1000)
             FreezeEntityPosition(vehicle, false)
-            Notify('Vehicle Washed', 'success')
+            Notify('Seu veículo foi limpo!', 'success')
             WaitingForWash = false
             washingVehicle = false
         end
