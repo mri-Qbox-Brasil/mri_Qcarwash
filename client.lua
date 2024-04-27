@@ -304,7 +304,7 @@ Citizen.CreateThread(function()
                             if not showText then
                                 showText = true
                                 lib.showTextUI((Config.button[1]):format(Config.cost), {
-                                    position = "left-center",
+                                    position = "right-center",
                                     icon = 'fa-solid fa-hand-sparkles',
                                     iconAnimation = 'bounce',
                                 })
